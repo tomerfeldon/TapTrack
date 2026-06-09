@@ -14,16 +14,16 @@ fills in the small parts that differ.
 | **WaterTap** | Water Intake Tracker   | glasses of water  |
 | **StretchTap** | Stretching Tracker   | stretch sets      |
 
-They are functionally identical — that is the whole point. The only difference
+They are functionally identical - that is the whole point. The only difference
 is the two values each app overrides.
 
 ## Module structure
 
 ```
 TapTrack/
-├─ shared/        Android library — abstract activity + shared layout/resources
-├─ watertap/      Application — WaterActivity (LAUNCHER)
-└─ stretchtap/    Application — StretchActivity (LAUNCHER)
+├─ shared/        Android library - abstract activity + shared layout/resources
+├─ watertap/      Application - WaterActivity (LAUNCHER)
+└─ stretchtap/    Application - StretchActivity (LAUNCHER)
 ```
 
 - `:watertap` and `:stretchtap` both `implementation(project(":shared"))`.
@@ -47,7 +47,7 @@ abstract class BaseTrackerActivity : AppCompatActivity() {
     abstract val unitLabel: String     // provided by each app
 
     // count, entries list, onCreate wiring, click handling and refresh()
-    // all live here — the apps add no logic of their own.
+    // all live here - the apps add no logic of their own.
 }
 ```
 
@@ -68,7 +68,7 @@ class StretchActivity : BaseTrackerActivity() {
 ```
 
 If counting or logging logic ever appears inside an app activity, that defeats
-the purpose — it belongs in the base.
+the purpose - it belongs in the base.
 
 ## Building & running
 
