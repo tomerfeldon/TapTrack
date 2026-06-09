@@ -1,6 +1,5 @@
 # TapTrack
 
-Assignment 1 — *Advanced Topics in UI Development*.
 
 Two separate Android apps that share **one** library module. The shared module
 holds an **abstract Activity**; each app provides a concrete Activity that
