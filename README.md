@@ -26,7 +26,10 @@ All implemented once in `BaseTrackerActivity` and shared by both apps:
   reached!" state.
 - **Per-entry timestamp** in the scrollable log (`glass of water #3 - 14:32`).
 - **Per-app accent color + emoji**, applied via abstract overrides.
-- **Material 3** look & feel (cards, buttons, theme).
+- **Compact number formatting** - large counts render as `1.2k` / `3m` / `4b`
+  via `Number.toCompactString()` (`shared/.../Extensions.kt`).
+- **Material 3** look & feel (cards, buttons, theme), **ViewBinding**, and
+  **edge-to-edge** with system-bar insets handled in the base.
 
 ## Module structure
 
@@ -100,14 +103,29 @@ Requires the Android SDK (use Android Studio, or set `ANDROID_HOME`).
 ```
 
 Each app installs and launches independently, showing its own title and an
-"Add <unit>" button. Tapping **Add** increments the count and appends
-`"<unit> #<n>"` to the scrollable log.
+"Add <unit>" button. Tapping **Add** increments the count and appends a
+timestamped line (`<unit> #<n>  -  HH:mm`) to the scrollable log.
+
+## Testing
+
+Each module (`shared`, `watertap`, `stretchtap`) has the standard pair:
+
+- `ExampleUnitTest` - local unit test, runs on the host JVM.
+- `ExampleInstrumentedTest` - instrumented test, runs on a device/emulator.
+
+```bash
+./gradlew test                  # unit tests (all modules)
+./gradlew connectedAndroidTest  # instrumented tests (needs a device/emulator)
+```
 
 ## Tech
 
 - Kotlin, Gradle Kotlin DSL + version catalog (`gradle/libs.versions.toml`)
 - AGP 8.7.3, Kotlin 2.0.21, compileSdk/targetSdk 34, minSdk 24
-- Dependencies: AndroidX `appcompat` + `com.google.android.material` (Material 3)
+- ViewBinding enabled in every module
+- Dependencies: AndroidX `appcompat`, `core-ktx`, `activity-ktx`, and
+  `com.google.android.material` (Material 3)
+- Test: JUnit 4, AndroidX `ext-junit`, Espresso
 
 ## Not included yet
 
