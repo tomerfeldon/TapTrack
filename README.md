@@ -9,13 +9,24 @@ fills in the small parts that differ.
 
 ## The two apps
 
-| App          | Title                  | Counts            |
-|--------------|------------------------|-------------------|
-| **WaterTap** | Water Intake Tracker   | glasses of water  |
-| **StretchTap** | Stretching Tracker   | stretch sets      |
+| App          | Title                | Counts           | Goal | Accent | Emoji |
+|--------------|----------------------|------------------|------|--------|-------|
+| **WaterTap** | Water Intake Tracker | glasses of water | 8    | blue   | 💧    |
+| **StretchTap** | Stretching Tracker | stretch sets     | 5    | green  | 🧘    |
 
 They are functionally identical - that is the whole point. The only difference
-is the two values each app overrides.
+is the handful of values each app overrides.
+
+## Features
+
+All implemented once in `BaseTrackerActivity` and shared by both apps:
+
+- **Add / Undo / Reset** the count.
+- **Daily goal + progress bar** (`LinearProgressIndicator`) with a "🎉 Goal
+  reached!" state.
+- **Per-entry timestamp** in the scrollable log (`glass of water #3 - 14:32`).
+- **Per-app accent color + emoji**, applied via abstract overrides.
+- **Material 3** look & feel (cards, buttons, theme).
 
 ## Module structure
 
@@ -45,18 +56,24 @@ TapTrack/
 abstract class BaseTrackerActivity : AppCompatActivity() {
     abstract val screenTitle: String   // provided by each app
     abstract val unitLabel: String     // provided by each app
+    abstract val dailyGoal: Int        // progress-bar target
+    abstract val accentColor: Int      // theming
+    abstract val emoji: String         // header icon
 
-    // count, entries list, onCreate wiring, click handling and refresh()
-    // all live here - the apps add no logic of their own.
+    // count, entries list, onCreate wiring, add/undo/reset, timestamps,
+    // progress and refresh() all live here - the apps add no logic of their own.
 }
 ```
 
-Each concrete activity is just the two overrides:
+Each concrete activity is just the overrides — no logic:
 
 ```kotlin
 class WaterActivity : BaseTrackerActivity() {
     override val screenTitle = "Water Intake Tracker"
     override val unitLabel = "glass of water"
+    override val dailyGoal = 8
+    override val accentColor = 0xFF2196F3.toInt()
+    override val emoji = "💧"
 }
 ```
 
@@ -64,6 +81,9 @@ class WaterActivity : BaseTrackerActivity() {
 class StretchActivity : BaseTrackerActivity() {
     override val screenTitle = "Stretching Tracker"
     override val unitLabel = "stretch set"
+    override val dailyGoal = 5
+    override val accentColor = 0xFF4CAF50.toInt()
+    override val emoji = "🧘"
 }
 ```
 
@@ -87,7 +107,7 @@ Each app installs and launches independently, showing its own title and an
 
 - Kotlin, Gradle Kotlin DSL + version catalog (`gradle/libs.versions.toml`)
 - AGP 8.7.3, Kotlin 2.0.21, compileSdk/targetSdk 34, minSdk 24
-- Only third-party dependency: AndroidX `appcompat`
+- Dependencies: AndroidX `appcompat` + `com.google.android.material` (Material 3)
 
 ## Not included yet
 

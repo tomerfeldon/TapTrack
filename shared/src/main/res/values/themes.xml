@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Shared Material 3 theme used by both apps. The per-app accent color is
+         applied programmatically in BaseTrackerActivity, so this single theme is
+         enough for the whole project. -->
+    <style name="Theme.TapTrack" parent="Theme.Material3.DayNight" />
+
+</resources>

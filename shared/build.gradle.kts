@@ -23,7 +23,9 @@ android {
 
 dependencies {
     // Exposed with `api` so the app modules can extend AppCompatActivity
-    // (the base class of BaseTrackerActivity) transitively.
+    // (the base class of BaseTrackerActivity) transitively, and so the shared
+    // Material 3 components + Theme.TapTrack are visible to both apps.
     api(libs.androidx.appcompat)
+    api(libs.material)
     implementation(libs.androidx.core.ktx)
 }
