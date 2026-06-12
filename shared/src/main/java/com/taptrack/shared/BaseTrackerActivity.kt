@@ -2,11 +2,12 @@ package com.taptrack.shared
 
 import android.content.res.ColorStateList
 import android.os.Bundle
-import android.widget.TextView
+import androidx.activity.enableEdgeToEdge
 import androidx.annotation.ColorInt
 import androidx.appcompat.app.AppCompatActivity
-import com.google.android.material.button.MaterialButton
-import com.google.android.material.progressindicator.LinearProgressIndicator
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import com.taptrack.shared.databinding.ActivityTrackerBinding
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 
@@ -37,79 +38,88 @@ abstract class BaseTrackerActivity : AppCompatActivity() {
     abstract val emoji: String
 
     private var count = 0
-    private val entries = mutableListOf<String>()
+
+    /** Timestamps of each tap; the running index is rendered dynamically. */
+    private val entryTimes = mutableListOf<String>()
 
     private val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")
 
-    private lateinit var headerText: TextView
-    private lateinit var countText: TextView
-    private lateinit var progressBar: LinearProgressIndicator
-    private lateinit var progressText: TextView
-    private lateinit var logText: TextView
+    private lateinit var binding: ActivityTrackerBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_tracker)
+        enableEdgeToEdge()
+        binding = ActivityTrackerBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        // Keep content clear of the status/navigation bars, preserving the
+        // base 16dp content padding.
+        val basePadding = (16 * resources.displayMetrics.density).toInt()
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { view, insets ->
+            val bars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            view.setPadding(
+                basePadding + bars.left,
+                basePadding + bars.top,
+                basePadding + bars.right,
+                basePadding + bars.bottom,
+            )
+            insets
+        }
 
         title = screenTitle
 
-        headerText = findViewById(R.id.headerText)
-        countText = findViewById(R.id.countText)
-        progressBar = findViewById(R.id.progressBar)
-        progressText = findViewById(R.id.progressText)
-        logText = findViewById(R.id.logText)
+        binding.addButton.text = "Add $unitLabel"
+        binding.addButton.setOnClickListener { onAdd() }
+        binding.undoButton.setOnClickListener { onUndo() }
+        binding.resetButton.setOnClickListener { onReset() }
 
-        val addButton: MaterialButton = findViewById(R.id.addButton)
-        val undoButton: MaterialButton = findViewById(R.id.undoButton)
-        val resetButton: MaterialButton = findViewById(R.id.resetButton)
-        addButton.text = "Add $unitLabel"
-        addButton.setOnClickListener { onAdd() }
-        undoButton.setOnClickListener { onUndo() }
-        resetButton.setOnClickListener { onReset() }
-
-        applyAccent(addButton)
+        applyAccent()
         refresh()
     }
 
-    private fun applyAccent(addButton: MaterialButton) {
-        headerText.text = "$emoji  $screenTitle"
-        countText.setTextColor(accentColor)
-        addButton.backgroundTintList = ColorStateList.valueOf(accentColor)
-        progressBar.setIndicatorColor(accentColor)
+    private fun applyAccent() {
+        binding.headerText.text = "$emoji  $screenTitle"
+        binding.logo.setColorFilter(accentColor)
+        binding.countText.setTextColor(accentColor)
+        binding.addButton.backgroundTintList = ColorStateList.valueOf(accentColor)
+        binding.progressBar.setIndicatorColor(accentColor)
     }
 
     private fun onAdd() {
         count++
-        val time = LocalTime.now().format(timeFormatter)
-        entries += "$unitLabel #$count  —  $time"
+        entryTimes += LocalTime.now().format(timeFormatter)
         refresh()
     }
 
     private fun onUndo() {
         if (count > 0) {
             count--
-            entries.removeAt(entries.lastIndex)
+            entryTimes.removeAt(entryTimes.lastIndex)
             refresh()
         }
     }
 
     private fun onReset() {
         count = 0
-        entries.clear()
+        entryTimes.clear()
         refresh()
     }
 
     private fun refresh() {
-        countText.text = count.toString()
+        binding.countText.text = count.toCompactString()
 
-        progressBar.max = dailyGoal
-        progressBar.progress = count.coerceAtMost(dailyGoal)
-        progressText.text = if (count >= dailyGoal) {
-            "🎉 Goal reached! ($count/$dailyGoal)"
+        binding.progressBar.max = dailyGoal
+        binding.progressBar.progress = count.coerceAtMost(dailyGoal)
+        binding.progressText.text = if (count >= dailyGoal) {
+            "🎉 Goal reached! (${count.toCompactString()}/${dailyGoal.toCompactString()})"
         } else {
-            "$count / $dailyGoal"
+            "${count.toCompactString()} / ${dailyGoal.toCompactString()}"
         }
 
-        logText.text = entries.joinToString("\n")
+        // Numbering is derived from the current list, so it stays correct
+        // after an undo instead of keeping stale baked-in indices.
+        binding.logText.text = entryTimes
+            .mapIndexed { index, time -> "$unitLabel #${index + 1}  —  $time" }
+            .joinToString("\n")
     }
 }

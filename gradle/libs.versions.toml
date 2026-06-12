@@ -4,10 +4,12 @@ kotlin = "2.0.21"
 appcompat = "1.7.0"
 coreKtx = "1.13.1"
 material = "1.12.0"
+activityKtx = "1.9.3"
 
 [libraries]
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-activity-ktx = { group = "androidx.activity", name = "activity-ktx", version.ref = "activityKtx" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 
 [plugins]

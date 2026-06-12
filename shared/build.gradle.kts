@@ -19,6 +19,10 @@ android {
     kotlinOptions {
         jvmTarget = "17"
     }
+
+    buildFeatures {
+        viewBinding = true
+    }
 }
 
 dependencies {
@@ -28,4 +32,5 @@ dependencies {
     api(libs.androidx.appcompat)
     api(libs.material)
     implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.activity.ktx) // enableEdgeToEdge()
 }
