@@ -9,6 +9,7 @@ android {
 
     defaultConfig {
         minSdk = 24
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     compileOptions {
@@ -33,4 +34,8 @@ dependencies {
     api(libs.material)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.activity.ktx) // enableEdgeToEdge()
+
+    testImplementation(libs.junit)
+    androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.androidx.espresso.core)
 }
