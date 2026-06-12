@@ -68,7 +68,7 @@ abstract class BaseTrackerActivity : AppCompatActivity() {
 }
 ```
 
-Each concrete activity is just the overrides — no logic:
+Each concrete activity is just the overrides -no logic:
 
 ```kotlin
 class WaterActivity : BaseTrackerActivity() {
